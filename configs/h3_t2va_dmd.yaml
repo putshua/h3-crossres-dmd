@@ -1,0 +1,99 @@
+model:
+  # Original FL2VA directory: use loader=legacy_fl2va.
+  # Official converted MiniMaxAI/MiniMax-H3: use loader=diffusers.
+  pretrained_path: /path/to/MiniMax-H3/FL2VA
+  transformer_subfolder: transformer
+  task: t2va
+  loader: legacy_fl2va
+  dtype: bfloat16
+  gradient_checkpointing: true
+  attention_backend: null
+  lora_path: null
+  lora_rank: 64
+  lora_alpha: 64
+  critic_lora_rank: 64
+  critic_lora_alpha: 64
+  lora_target_modules: [to_q, to_k, to_v, to_out.0]
+
+geometry:
+  video_channels: 24
+  audio_channels: 2
+  audio_latent_channels: 32
+  patch_size: [1, 2, 2]
+  spatial_compression_ratio: 16
+  fps: 24
+  audio_latents_per_second: 40
+  frames_per_chunk: 17
+  latents_per_chunk: 5
+  # The current Diffusers H3 forward is padless. The standalone layout builder
+  # can still emit 64-aligned SGLang oracle fixtures, but active runs keep null.
+  packed_alignment: null
+
+schedule:
+  video_shift: 12.0
+  audio_shift: 3.0
+  num_inference_steps: 50
+  # Shared unshifted coordinate q. This 4-forward grid is used by distilled
+  # rollout/inference; set null to construct an evenly spaced grid.
+  inference_q: [1.0, 0.75, 0.5, 0.25, 0.0]
+  train_q_min: 0.02
+  train_q_max: 0.98
+
+dmd:
+  enabled: true
+  conditional_only: true
+  data_mode: mixed
+  video_loss_weight: 1.0
+  audio_loss_weight: 1.0
+  rf_loss_weight: 1.0
+  dmd_loss_weight: 1.0
+  critic_loss_weight: 1.0
+  critic_update_frequency: 1
+  rollout_steps: 4
+  rollout_grad_steps: 1
+  normalize_dmd_gradient: true
+  normalization_eps: 1.0e-5
+
+data:
+  manifest: /path/to/cache/manifest.jsonl
+  cache_root: /path/to/cache
+  batch_size: 1
+  num_workers: 4
+  shuffle: true
+  drop_last: true
+  pin_memory: true
+
+cache:
+  text_encoder_layer: 50
+  video_encode_seed: 42
+  overwrite: false
+
+distributed:
+  backend: nccl
+  strategy: fsdp2
+  # Override this to WORLD_SIZE to enable Diffusers Ulysses context parallel.
+  sequence_parallel_size: 1
+  tensor_parallel_size: 1
+  fsdp_reshard_after_forward: true
+  reduce_dtype: float32
+
+checkpoint:
+  output_dir: outputs/h3_t2va_dmd
+  resume: null
+  save_every: 1000
+  keep_last: 3
+
+logging:
+  log_every: 10
+  tensorboard: true
+  jsonl: true
+
+training:
+  seed: 42
+  max_steps: 100000
+  gradient_accumulation_steps: 1
+  learning_rate: 1.0e-5
+  critic_learning_rate: 1.0e-5
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  autocast: true

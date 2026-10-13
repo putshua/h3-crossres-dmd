@@ -1,0 +1,22 @@
+{
+  "mapper_kind": "rcan",
+  "mapper_width": 128,
+  "mapper_groups": 4,
+  "crop_latent_frames": 5,
+  "learning_rate": 0.0002,
+  "max_steps": 40000,
+  "batch_size": 4,
+  "num_workers": 2,
+  "save_every": 100,
+  "validation_every": 500,
+  "validation_samples": 192,
+  "log_every": 1,
+  "grad_clip": 1.0,
+  "mse_ratio_limit": 0.995,
+  "temporal_ratio_limit": 1.0,
+  "seed": 42,
+  "tensorboard": true,
+  "visualization_manifest": "/mnt/data/butong/codebase_h3/configs/h3_upsampler_visualization_320p.json",
+  "visualization_every": 500,
+  "visualization_vae_path": "/mnt/data/butong/mmh3/MiniMax-H3/FL2VA"
+}

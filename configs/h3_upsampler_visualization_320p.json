@@ -1,0 +1,14 @@
+[
+  {
+    "id": "teacher_cheetah_5s",
+    "path": "/mnt/data/butong/codebase_h3/outputs/h3-eval128-nonstride320p-iter1000-local4-20261004/teacher/fullstep49/A-01_512x320_124f_seed1.pt"
+  },
+  {
+    "id": "teacher_crowd_10s",
+    "path": "/mnt/data/butong/codebase_h3/outputs/h3-eval128-nonstride320p-iter1000-local4-20261004/teacher/fullstep49/A-02_512x320_243f_seed1.pt"
+  },
+  {
+    "id": "dmd_whale_15s",
+    "path": "/mnt/data/butong/codebase_h3/outputs/h3-eval128-nonstride320p-iter1000-local4-20261004/traj4_vshift12/native4/A-03_512x320_362f_seed1.pt"
+  }
+]

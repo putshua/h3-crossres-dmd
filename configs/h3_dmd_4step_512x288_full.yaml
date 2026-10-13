@@ -1,0 +1,57 @@
+# Full-parameter conditional DMD. Width x height = 512 x 288.
+model:
+  pretrained_path: /mnt/data/butong/mmh3/MiniMax-H3/FL2VA
+  loader: legacy_fl2va
+  dtype: bfloat16
+  gradient_checkpointing: true
+  lora_rank: 0
+  critic_lora_rank: 0
+schedule:
+  inference_q: [1.0, 0.75, 0.5, 0.25, 0.0]
+  num_inference_steps: 5
+  train_q_min: 0.02
+  train_q_max: 0.98
+dmd:
+  enabled: true
+  conditional_only: true
+  data_mode: rollout
+  rf_loss_weight: 0.0
+  dmd_loss_weight: 1.0
+  critic_loss_weight: 1.0
+  critic_update_frequency: 1
+  rollout_steps: 4
+  rollout_grad_steps: 1
+data:
+  manifest: outputs/h3_prompts_512x288/manifest.jsonl
+  cache_root: ''
+  batch_size: 1
+  num_workers: 2
+  height: 288
+  width: 512
+  # H3 nominal 5 / 10 / 15 seconds at 24 fps (17*n+5 frames).
+  frame_buckets: [124, 243, 362]
+  shuffle: true
+  drop_last: false
+distributed:
+  backend: nccl
+  strategy: fsdp2
+  fsdp_size: 32
+  fsdp_reshard_after_forward: true
+  sequence_parallel_size: 1
+  reduce_dtype: float32
+training:
+  seed: 42
+  max_steps: 3000
+  gradient_accumulation_steps: 1
+  learning_rate: 1.0e-5
+  critic_learning_rate: 1.0e-5
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+checkpoint:
+  output_dir: outputs/h3_dmd_4step_512x288_full
+  save_every: 500
+  keep_last: 2
+logging:
+  log_every: 1
+  tensorboard: true
+  jsonl: true

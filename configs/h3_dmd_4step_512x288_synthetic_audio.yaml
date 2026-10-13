@@ -1,0 +1,5 @@
+# Default: pure DMD, full parameters, 512x288, 1-4-step cycle, FSDP32.
+# Registered defaults + dataset/run settings live in:
+# h3dmd/configs/experiments/h3_synthetic_audio.py
+# Local YAML keys below and --set overrides take precedence over the experiment.
+experiment: h3_synthetic_audio_dmd

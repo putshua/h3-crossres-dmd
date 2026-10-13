@@ -1,0 +1,39 @@
+{
+  "status": "authorized_canary_then_full_idle_only",
+  "workspace_id": "294814",
+  "resource_id": "quota17naxai5i4f",
+  "dataset_config": "configs/h3_upsampler_refiner_stride_1m.json",
+  "job_namespace": "butong_h3_upcache_",
+  "job_type": "PyTorchJob",
+  "priority": 8,
+  "oversold_type": "ForceQuotaOverSold",
+  "worker_pods_per_job": 1,
+  "gpus_per_pod": 4,
+  "cpus_per_pod": 48,
+  "memory_per_pod": "400Gi",
+  "shared_memory_per_pod": "64Gi",
+  "data_source_id": "d-sr26kz4pn4i6ycscwp",
+  "mount_path": "/mnt/data/",
+  "image": "tongyi-acr-registry-vpc.cn-wulanchabu.cr.aliyuncs.com/eflops/bt:butong",
+  "image_and_mount_provenance": "GetJob of current visible jobs on 2026-10-09; new idle pod and worker environment still require canary validation",
+  "enable_error_monitoring_in_aimaster": true,
+  "error_monitoring_args": "--job-execution-mode=Sync --enable-job-restart=True --max-num-of-job-restart=100 --fault-tolerant-policy=OnFailure",
+  "canary_jobs": 1,
+  "proposed_scale_up_concurrency": "waves of 32 four-GPU nodes; replenish up to 64 pending nodes; cap active nodes by remaining cache tasks",
+  "authorized_production_gpu_budget": "maximize_schedulable_idle_capacity_in_current_workspace",
+  "production_user_command": "scripts.h3_upsampler_dlc builds frozen four-worker command",
+  "output_storage": "paired_safetensors_in_approximately_2GiB_tar_shards",
+  "restart_contract": "skip_only_verified_committed_shards; isolate_attempts_and_discard_uncommitted_partial_shards",
+  "before_canary": [
+    "implement_refiner_stride_pair_worker_and_atomic_tar_commit",
+    "freeze_source_window_manifests_and_immutable_worker_snapshot",
+    "verify_current_h3_vae_environment_in_target_image",
+    "wire_project_and_shared_job_ledgers"
+  ],
+  "before_scale_up": [
+    "verify_5_10_15s_frame_indices_colors_latent_shapes_and_decode_previews",
+    "verify_interrupted_worker_resume_and_archive_integrity",
+    "measure_pairs_per_gpu_hour_and_shared_storage_load",
+    "confirm_actual_idle_scheduling_and_production_concurrency"
+  ]
+}
